@@ -1,0 +1,25 @@
+# References
+
+workdir:
+    WORKDIR
+scriptsdir:
+    PIPELINE_HOME/workflow/scripts/
+manifest:
+    WORKDIR/config/samples.tsv
+tools:
+    PIPELINE_HOME/resources/tools.yaml
+cluster:
+    PIPELINE_HOME/resources/cluster.yaml
+
+# Sample
+sample:
+    "CL0338-cfD-M"
+
+# Reference genome
+genome: hg38
+
+hg38:
+    refflat:
+        /data/khanlab3/gb_omics/resources/ucsc/hg38/refFlat.txt
+    fasta:
+        /data/khanlab3/gb_omics/resources/genomes/hg38/hg38.fa

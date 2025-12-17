@@ -1,0 +1,27 @@
+# Cluster resources per rule
+__default__:
+    gres: lscratch:96
+    mem: 4g
+    threads: 2
+    time: 00-01:00:00
+    partition: norm
+    name: "{rule}.{wildcards}"
+    output: "logs/{rule}.${{SLURM_JOBID}}.%j.{wildcards}.out"
+    error: "logs/{rule}.${{SLURM_JOBID}}.%j.{wildcards}.err"
+
+biomodal:
+  mem: 2g
+  threads: 4
+  time: 1-00:00:00
+
+cnvkit:
+  threads: 8
+
+opencravat:
+  threads: 4
+  mem: 16g
+  time: 8:00:00
+
+filter_variants:
+  mem: 2g
+  time: 00:30:00
