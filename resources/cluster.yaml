@@ -20,8 +20,11 @@ cnvkit:
 opencravat:
   threads: 4
   mem: 16g
-  time: 8:00:00
+  time: 1-00:00:00
 
 filter_variants:
   mem: 2g
   time: 00:30:00
+
+ichorCNA:
+  time: 08:00:00

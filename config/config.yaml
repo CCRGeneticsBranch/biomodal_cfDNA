@@ -10,6 +10,11 @@ tools:
     PIPELINE_HOME/resources/tools.yaml
 cluster:
     PIPELINE_HOME/resources/cluster.yaml
+ichorCNA_scripts:
+    /data/khanlab3/gb_omics/software/ichorCNA/scripts
+ichorCNA_extdata:
+    /data/pehrssonec/R/rhel8/4.5/ichorCNA/extdata/
+
 
 # Sample
 sample:

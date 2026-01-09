@@ -1,3 +1,4 @@
 biomodal: "biomodal"
 cnvkit: "cnvkit"
 samtools: "samtools"
+R: "R"
