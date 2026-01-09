@@ -132,8 +132,6 @@ rule opencravat:
         getthreads("opencravat")-1
     shell:
         """
-        #export PYTHONPATH="/data/khanlab/projects/ngs_pipeline_testing/opencravat/oc_vg_2.13_install:$PYTHONPATH"
-
         echo "Running OpenCRAVAT 2.13.0 analysis"
         echo "Input VCF: {input.vcf}"
         echo "Genome build: hg38 (GRCh38)"
@@ -145,6 +143,7 @@ rule opencravat:
         -a gnomad3 \
         --mp {threads} \
         -t text \
+        --md /data/khanlab/projects/ngs_pipeline_testing/opencravat/oc_vg_2.13_install/lib/python3.9/site-packages/cravat/modules \
         -d {params.output}
         """
 
