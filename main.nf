@@ -1,76 +1,61 @@
-# Import python libraries
-import os
-from os.path import join
-import itertools
-import yaml
-import pandas as pd
+log.info """\
+Biomodal cfDNA
+=============
+NF version   : $nextflow.version
+runName      : $workflow.runName
+username     : $workflow.userName
+configs      : $workflow.configFiles
+profile      : $workflow.profile
+cmd line     : $workflow.commandLine
+start time   : $workflow.start
+projectDir   : $workflow.projectDir
+launchDir    : $workflow.launchDir
+workDir      : $workflow.workDir
+homeDir      : $workflow.homeDir
+samplesheet  : ${params.samplesheet}
+sample       : ${params.sample} // Sample name, e.g. CL0338-cfD-M
+genome       : ${params.genome} // Reference genome, e.g. hg38
+"""
+.stripIndent()
 
-# Set directories
-WORKDIR = config["workdir"]
-RESULTSDIR = join(WORKDIR,"results")
-SCRIPTSDIR = config["scriptsdir"]
+Channel
+  .fromPath(params.samplesheet)
+  .splitCsv(header: true, sep: '\t')
+  .map { row -> [original: row.Original, new: row.New] }
+  .set { ROWS }
 
-# Get sample
-SAMPLE = config["sample"]
+ROWS
+  .map { v -> tuple(v.original, v.new) } 
+  .set { fastq_mapping }
 
-# Get fastq location
-manifest = pd.read_table(config["manifest"])
-fastqs = manifest['New'].tolist()
+ROWS
+  .map { it.new }
+  .set { fastqs }
 
-# Define tools
-with open(config["tools"]) as f:
-    TOOLS = yaml.safe_load(f)
+include { FASTQC } from "./modules/biomodal.nf"
+include { BWA_MEM } from './modules/ichorCNA.nf'
+include { ICHOR_CNA } from './modules/ichorCNA.nf'
 
-# Define resources per rule
-with open(config["cluster"]) as f:
-    CLUSTER = yaml.safe_load(f)
+process link_raw {
+    //Link fastqs from storage to Biomodal nf-input, renaming multiple flowcells as lanes
 
-getthreads=lambda rname:int(CLUSTER[rname]["threads"]) if rname in CLUSTER and "threads" in CLUSTER[rname] else int(CLUSTER["__default__"]["threads"])
-getmemg=lambda rname:CLUSTER[rname]["mem"] if rname in CLUSTER and "mem" in CLUSTER[rname] else CLUSTER["__default__"]["mem"]
-
-# Define genomes
-genome = config['genome']
-
-# Rules
-localrules: link_raw
-
-rule all:
     input:
-        # Link fastqs
-        expand(join(RESULTSDIR, "biomodal", "nf-input", "{fastq}"),fastq=fastqs),
-        
-        # Biomodal
-        expand(join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),sample=[SAMPLE]),
-        expand(join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","variant_call_files","germline","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz"),sample=[SAMPLE]),
+    tuple path(original), val(new)
 
-        # CNVkit
-        expand(join(RESULTSDIR, "cnvkit", "{sample}.genome.GRCh38Decoy_primary_assembly.dedup-scatter.png"),sample=[SAMPLE]),
-
-        # OpenCravat
-        expand(join(RESULTSDIR, "OpenCravat", "{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz.tsv"),sample=[SAMPLE]),
-        expand(join(RESULTSDIR, "OpenCravat", "{sample}.all_annotations.txt"),sample=[SAMPLE]),
-        expand(join(RESULTSDIR, "OpenCravat", "{sample}.rare_annotation.tsv"),sample=[SAMPLE]),
-
-        # ichorCNA
-        expand(join(RESULTSDIR, "ichorCNA", "{sample}.10000.wig"),sample=[SAMPLE]),
-        expand(join(RESULTSDIR, "ichorCNA", "{sample}.params.txt"),sample=[SAMPLE])
-
-rule link_raw:
-    """
-    Link fastqs from storage to Biomodal nf-input, renaming multiple flowcells as lanes
-    """
-    input:
-        manifest = config["manifest"]
     output:
-        fastq = expand(join(RESULTSDIR, "biomodal", "nf-input", "{fastq}"),fastq=fastqs)
-    params:
-        outdir = join(RESULTSDIR, "biomodal", "nf-input")
-    shell:
-        """
-        while read old new
-        do
-            ln -s $old {params.outdir}/$new
-        done < <(tail -n +2 {input.manifest})
-        """
+    tuple path(biomodal/nf-input/new)
 
+    script:
+    """
+    ln -s ${fastq_mapping[0]} biomodal/nf-input/${fastq_mapping[1]}
+    """
+}
 
+workflow {
+    fastq_mapping | link_raw
+}
+
+workflow.onComplete {
+    println "Workflow finished at: ${workflow.end}"
+    println: "Sample processed: ${params.sample}" 
+}

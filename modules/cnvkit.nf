@@ -1,3 +1,6 @@
+       # CNVkit
+        expand(join(RESULTSDIR, "cnvkit", "{sample}.genome.GRCh38Decoy_primary_assembly.dedup-scatter.png"),sample=[SAMPLE]),
+
 rule cnvkit:
     """
     Run CNVkit on biomodal evoC bam files with flat reference

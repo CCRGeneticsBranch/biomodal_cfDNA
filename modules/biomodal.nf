@@ -1,3 +1,7 @@
+        # Biomodal
+        expand(join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),sample=[SAMPLE]),
+        expand(join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","variant_call_files","germline","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz"),sample=[SAMPLE]),
+
 rule biomodal:
     """
     Run Biomodal evoC analysis pipeline

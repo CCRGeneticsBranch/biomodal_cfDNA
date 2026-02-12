@@ -1,3 +1,7 @@
+         # ichorCNA
+        expand(join(RESULTSDIR, "ichorCNA", "{sample}.10000.wig"),sample=[SAMPLE]),
+        expand(join(RESULTSDIR, "ichorCNA", "{sample}.params.txt"),sample=[SAMPLE])
+
 rule hmmcopy:
     """
     Generate WIG file from biomodal evoC bam

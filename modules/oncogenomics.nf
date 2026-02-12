@@ -1,3 +1,8 @@
+       # OpenCravat
+        expand(join(RESULTSDIR, "OpenCravat", "{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz.tsv"),sample=[SAMPLE]),
+        expand(join(RESULTSDIR, "OpenCravat", "{sample}.all_annotations.txt"),sample=[SAMPLE]),
+        expand(join(RESULTSDIR, "OpenCravat", "{sample}.rare_annotation.tsv"),sample=[SAMPLE]),
+
 rule opencravat:
     """
     Run OpenCravat 2.13.0 on VCF files
