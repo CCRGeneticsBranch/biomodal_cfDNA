@@ -14,11 +14,15 @@ ichorCNA_scripts:
     /data/khanlab3/gb_omics/software/ichorCNA/scripts
 ichorCNA_extdata:
     /data/pehrssonec/R/rhel8/4.5/ichorCNA/extdata/
+oncogenomics_nf:
+    /data/khanlab/projects/Nextflow_dev/dev/vg_dev/VCF_Annotation_NF
 
 
 # Sample
 sample:
     "CL0338-cfD-M"
+case:
+    "CL0338"
 
 # Reference genome
 genome: hg38
