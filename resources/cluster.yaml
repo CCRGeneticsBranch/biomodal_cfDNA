@@ -18,8 +18,8 @@ cnvkit:
   threads: 8
 
 opencravat:
-  threads: 4
-  mem: 16g
+  threads: 12
+  mem: 48g
   time: 1-00:00:00
 
 filter_variants:

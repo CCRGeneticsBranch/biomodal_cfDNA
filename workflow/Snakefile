@@ -13,6 +13,7 @@ SCRIPTSDIR = config["scriptsdir"]
 # Get sample
 SAMPLE = config["sample"]
 CASE = config["case"]
+PATIENT = config["patient"]
 
 # Get fastq location
 manifest = pd.read_table(config["manifest"])
@@ -41,18 +42,18 @@ rule all:
         expand(join(RESULTSDIR, "biomodal", "nf-input", "{fastq}"),fastq=fastqs),
         
         # Biomodal
-        expand(join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),sample=[SAMPLE]),
-        expand(join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","variant_call_files","germline","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz"),sample=[SAMPLE]),
+        join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","bams",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
+        join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","variant_call_files","germline",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz"),
 
         # CNVkit
-        expand(join(RESULTSDIR, "cnvkit", "{sample}.genome.GRCh38Decoy_primary_assembly.dedup-scatter.png"),sample=[SAMPLE]),
+        join(RESULTSDIR, "cnvkit", f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup-scatter.png"),
 
         # OpenCravat
-        expand(join(RESULTSDIR, "Oncogenomics", "{sample}", "{case}", "{sample}", "db", "{sample}.rnaseq"),sample=[SAMPLE],case=[CASE]),
+        join(RESULTSDIR, "Oncogenomics", PATIENT, CASE, PATIENT, "db", f"{PATIENT}.variants"),
 
         # ichorCNA
-        expand(join(RESULTSDIR, "ichorCNA", "{sample}.10000.wig"),sample=[SAMPLE]),
-        expand(join(RESULTSDIR, "ichorCNA", "{sample}.params.txt"),sample=[SAMPLE])
+        join(RESULTSDIR, "ichorCNA", f"{SAMPLE}.10000.wig"),
+        join(RESULTSDIR, "ichorCNA", f"{SAMPLE}.params.txt")
 
 rule link_raw:
     """
@@ -79,10 +80,10 @@ rule biomodal:
     input:
         fastq = [join(RESULTSDIR, "biomodal", "nf-input", new) for new in manifest['New']]
     output:
-        bam = join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
-        vcf = join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","variant_call_files","germline","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz")
+        bam = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","bams",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
+        vcf = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","variant_call_files","germline",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz")
     params:
-        sample = "{sample}",
+        sample = SAMPLE,
         output = join(RESULTSDIR, "biomodal")
     envmodules:
         TOOLS["biomodal"]
@@ -100,9 +101,9 @@ rule cnvkit:
     Run CNVkit on biomodal evoC bam files with flat reference
     """
     input:
-        bam = join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
+        bam = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","bams",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
     output:
-        png = join(RESULTSDIR, "cnvkit", "{sample}.genome.GRCh38Decoy_primary_assembly.dedup-scatter.png")
+        png = join(RESULTSDIR, "cnvkit", f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup-scatter.png")
     envmodules:
         TOOLS["cnvkit"],
         TOOLS["samtools"]
@@ -122,27 +123,35 @@ rule opencravat:
     Run OpenCravat variant annotation and filtering on GATK HaplotypeCaller VCF using Vineela's NextFlow workflow
     """
     input:
-        vcf = join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","variant_call_files","germline","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz"),
-        bam = join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam")
+        vcf = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","variant_call_files","germline",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.vcf.gz"),
+        bam = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","bams",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.bam")
     output:
-        samplesheet = join(RESULTSDIR, "Oncogenomics", "{sample}.{case}.samplesheet.csv"),
-        db = join(RESULTSDIR, "Oncogenomics", "{sample}", "{case}", "{sample}", "db", "{sample}.rnaseq")
+        db = join(RESULTSDIR, "Oncogenomics", PATIENT, CASE, PATIENT, "db", f"{PATIENT}.variants")
     params:
-        sample = "{sample}",
-        case = "{case}",
+        sample = SAMPLE,
+        case = CASE,
+        patient = PATIENT,
         output = join(RESULTSDIR, "Oncogenomics"),
-        pipeline_loc = config["oncogenomics_nf"]
+        pipeline_loc = config["oncogenomics_nf"],
+        vcf_unzipped = temp(join(RESULTSDIR, "Oncogenomics", PATIENT, CASE, f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.vcf")),
+        samplesheet = join(RESULTSDIR, "Oncogenomics", PATIENT, CASE, f"{SAMPLE}.samplesheet.csv")
     envmodules:
-        TOOLS["nextflow"]
+        TOOLS["nextflow"],
+        TOOLS["annovar"]
     shell:
         """
-        echo -e "sample,casename,vcf,bam\n{params.sample},{params.case},{input.vcf},{input.bam}" > {output.samplesheet}
+        # Unzip VCF for OpenCravat
+        gunzip -c {input.vcf} > {params.vcf_unzipped}
         
+        # Create samplesheet with unzipped VCF
+        echo -e "patient,sample,casename,vcf,bam\n{params.patient},{params.sample},{params.case},{params.vcf_unzipped},{input.bam}" > {params.samplesheet}
+
+        # Run OpenCravat workflow
         nextflow run {params.pipeline_loc}/main.nf \
-            --input_samplesheet {output.samplesheet} \
+            -c {params.pipeline_loc}/nextflow.config \
+            --input_samplesheet {params.samplesheet} \
             --resultsdir {params.output} \
-            --genome_v hg38 \
-            -profile slurm \
+            -profile biowulf \
             --modules_oc /data/khanlab/projects/ngs_pipeline_testing/opencravat/oc_vg_2.13_install/lib/python3.9/site-packages/cravat/modules \
             -resume
         """
@@ -152,9 +161,9 @@ rule hmmcopy:
     Generate WIG file from biomodal evoC bam
     """
     input:
-        bam = join(RESULTSDIR, "biomodal", "nf-results", "duet-1.4.1_{sample}_6bp","sample_outputs","bams","{sample}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
+        bam = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","bams",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
     output:
-        wig = join(RESULTSDIR, "ichorCNA", "{sample}.10000.wig")
+        wig = join(RESULTSDIR, "ichorCNA", f"{SAMPLE}.10000.wig")
     params:
         window = 10000
     shell:
@@ -170,14 +179,14 @@ rule ichorCNA:
     Run ichorCNA on WIG file
     """
     input:
-        wig = join(RESULTSDIR, "ichorCNA", "{sample}.10000.wig")
+        wig = join(RESULTSDIR, "ichorCNA", f"{SAMPLE}.10000.wig")
     output:
-        purity = join(RESULTSDIR, "ichorCNA", "{sample}.params.txt")
+        purity = join(RESULTSDIR, "ichorCNA", f"{SAMPLE}.params.txt")
     params:
         ichor_scripts = config["ichorCNA_scripts"],
         ichor_extdata = config["ichorCNA_extdata"],
         outdir = join(RESULTSDIR, "ichorCNA"),
-        sample = "{sample}"
+        sample = SAMPLE
     envmodules:
         TOOLS["R"]
     shell:

@@ -21,6 +21,8 @@ oncogenomics_nf:
 # Sample
 sample:
     "CL0338-cfD-M"
+patient:
+    "CL0338"
 case:
     "CL0338"
 
