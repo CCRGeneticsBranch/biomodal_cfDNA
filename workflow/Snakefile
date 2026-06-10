@@ -159,6 +159,7 @@ rule opencravat:
 rule hmmcopy:
     """
     Generate WIG file from biomodal evoC bam
+    See https://github.com/shahcompbio/hmmcopy_utils for installation
     """
     input:
         bam = join(RESULTSDIR, "biomodal", "nf-results", f"duet-1.4.1_{SAMPLE}_6bp","sample_outputs","bams",f"{SAMPLE}.genome.GRCh38Decoy_primary_assembly.dedup.bam"),
