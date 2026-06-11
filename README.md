@@ -5,10 +5,10 @@ Pipeline for cell-free DNA (cfDNA) analysis using the Biomodal evoC pipeline wit
 ## Overview
 
 This pipeline performs:
-1. **Biomodal evoC**: Runs the official biomodal NextFlow pipeline on biomodal evoC data (https://hpc.nih.gov/apps/biomodal.html)
-2. **CNVkit**: Identifies copy number variants
-3. **ichorCNA**: Estimates tumor purity and copy number profiles
-4. **OpenCravat**: Annotates and filters germline variants using Oncogenomics variant NextFlow pipeline
+1. **Biomodal evoC**: Runs the proprietary biomodal NextFlow pipeline on biomodal evoC data (https://software-docs.biomodal.com/projects/biomodal-cli/en/latest/guide.html, https://hpc.nih.gov/apps/biomodal.html)
+2. **CNVkit**: Identifies copy number variants (flat reference, WGS mode)
+3. **ichorCNA**: Estimates tumor purity and copy number profiles (10kb bins)
+4. **OpenCravat**: Runs Oncogenomics-based NextFlow workflow to annotate germline variants with OpenCravat and filter
 
 ## How to run
 
@@ -29,8 +29,8 @@ Edit the patient, case, and sample IDs.
 - `/path/to/my_run/config/samples.tsv` - sample manifest with fastq paths
 
 `config/samples.tsv` requires paired-end fastq files. The manifest file should have two columns:
-- **Old**: Original fastq file path(s)
-- **New**: Renamed fastq filename(s) (for handling multiple flowcells as lanes)
+- **Old**: Original fastq file path
+- **New**: Renamed fastq - required for handling multiple flowcells as lanes (https://software-docs.biomodal.com/projects/biomodal-cli/en/latest/guide.html#fastq-filename-format)
 
 Example:
 ```
@@ -61,12 +61,12 @@ bash run_biomodal --runmode=run --workdir=/path/to/my_run
 
 ## Output folders 
 
-Under pipeline output, `results/` subfolder
+Under pipeline output `results/` subfolder:
 
 | Folder | Contents |
 |--------|----------|
 | **biomodal/nf-input** | Symlinks to input fastq files |
-| **biomodal/nf-results** | Biomodal evoC outputs including aligned BAM files and germline VCF |
+| **biomodal/nf-results** | Biomodal evoC outputs, including aligned BAM files, GATK HaplotypeCaller germline VCF, and DNA methylation values |
 | **cnvkit** | Copy number variation analysis: segmentation plots and CNV calls |
 | **ichorCNA** | Tumor purity estimates and copy number profiles (WIG files and parameters) |
 | **Oncogenomics** | OpenCravat variant annotation results organized by patient/case |
