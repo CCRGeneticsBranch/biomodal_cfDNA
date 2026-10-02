@@ -1,0 +1,22 @@
+# Pipeline run files (if a work folder is created inside the repo)
+results/
+logs/
+stats/
+.snakemake/
+dryrun.log
+snakemake.log
+snakemake.stats
+submit_script.sbatch
+runinfo.yaml*
+slurm-*.out
+
+# Large data files
+*.bam
+*.bai
+*.fastq
+*.fastq.gz
+
+# Editor and OS files
+.vscode/
+.DS_Store
+__pycache__/
