@@ -1,14 +1,6 @@
-# Pipeline run files (if a work folder is created inside the repo)
-results/
-logs/
-stats/
-.snakemake/
-dryrun.log
-snakemake.log
-snakemake.stats
-submit_script.sbatch
-runinfo.yaml*
+# SLURM logs and Snakemake metadata from runs started inside the repo
 slurm-*.out
+.snakemake/
 
 # Large data files
 *.bam
