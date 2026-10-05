@@ -10,19 +10,24 @@ cluster:
     WORKDIR/config/cluster.yaml
 ichorCNA_scripts:
     /data/khanlab3/gb_omics/software/ichorCNA/scripts
+# inst/extdata folder of the ichorCNA R package
 ichorCNA_extdata:
     /data/pehrssonec/R/rhel8/4.5/ichorCNA/extdata/
 oncogenomics_nf:
     /data/khanlab/projects/Nextflow_dev/dev/vg_dev/VCF_Annotation_NF
+opencravat_modules:
+    /data/khanlab/projects/ngs_pipeline_testing/opencravat/oc_vg_2.13_install/lib/python3.9/site-packages/cravat/modules
+hmmcopy_readcounter:
+    /data/khanlab3/gb_omics/software/hmmcopy_utils/bin/readCounter
 
 
 # Sample
 sample:
-    "CL0338-cfD-M"
+    "sample1"
 patient:
-    "CL0338"
+    "patient1"
 case:
-    "CL0338"
+    "case1"
 
 # Reference genome
 genome: hg38

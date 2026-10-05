@@ -1,5 +1,5 @@
 Original	New
-/data/khanlab/projects/DATA/Sample_CL0338_cfD_M_AAAT2YNHV/Sample_CL0338_cfD_M_AAAT2YNHV_R1.fastq.gz	CL0338-cfD-M_S1_L001_R1_001.fastq.gz
-/data/khanlab/projects/DATA/Sample_CL0338_cfD_M_AAAT2YNHV/Sample_CL0338_cfD_M_AAAT2YNHV_R2.fastq.gz	CL0338-cfD-M_S1_L001_R2_001.fastq.gz
-/data/khanlab/projects/DATA/Sample_CL0338_cfD_M_AAAT3G7HV/Sample_CL0338_cfD_M_AAAT3G7HV_R1.fastq.gz	CL0338-cfD-M_S1_L002_R1_001.fastq.gz
-/data/khanlab/projects/DATA/Sample_CL0338_cfD_M_AAAT3G7HV/Sample_CL0338_cfD_M_AAAT3G7HV_R2.fastq.gz	CL0338-cfD-M_S1_L002_R2_001.fastq.gz
+/path/to/fastqs/sample1_FLOWCELL1_R1.fastq.gz	sample1_S1_L001_R1_001.fastq.gz
+/path/to/fastqs/sample1_FLOWCELL1_R2.fastq.gz	sample1_S1_L001_R2_001.fastq.gz
+/path/to/fastqs/sample1_FLOWCELL2_R1.fastq.gz	sample1_S1_L002_R1_001.fastq.gz
+/path/to/fastqs/sample1_FLOWCELL2_R2.fastq.gz	sample1_S1_L002_R2_001.fastq.gz
