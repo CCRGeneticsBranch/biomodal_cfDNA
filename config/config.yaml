@@ -12,7 +12,7 @@ ichorCNA_scripts:
     /data/khanlab3/gb_omics/software/ichorCNA/scripts
 # inst/extdata folder of the ichorCNA R package
 ichorCNA_extdata:
-    /data/pehrssonec/R/rhel8/4.5/ichorCNA/extdata/
+    /path/to/R/4.5/ichorCNA/extdata/
 oncogenomics_nf:
     /data/khanlab/projects/Nextflow_dev/dev/vg_dev/VCF_Annotation_NF
 opencravat_modules:
